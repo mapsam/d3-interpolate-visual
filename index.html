@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+
+<div class="container">
+  <h1>D3 <code>line.interpolate()</code></h1>
+  <p>This page visualizes the <code>d3.svg.line()</code> interpolation types as documented in the <a href="https://github.com/mbostock/d3/wiki/SVG-Shapes#line_interpolate">D3 Wiki</a>. All of the following interpolations are based on a perfect circle with four data points and a tension set to zero, <code>.tension(0)</code>.</p>
+</div>
+
+<div id="main"></div>
+<style>
+
+body {
+  padding: 3em 0;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+code {
+  background: #e5e5e5;
+  font-size: 1em;
+  padding: 1px 3px;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+}
+.container p {
+  line-height: 1.5em;
+}
+
+.title {
+  font-family: monospace;
+  margin: 10px 0 0;
+}
+.description {
+  font-size: .9em;
+  letter-spacing: 0.03em;
+  margin: 7px 0 0;
+}
+
+#main {
+  margin-top: 3em;
+  text-align: center;
+}
+
+.interpolation {
+  padding: 2em;
+  width: 200px;
+  height: 350px;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+}
+
+svg {
+  display: block;
+  margin: auto;
+}
+
+path {
+  fill: none;
+  stroke: #c0c0c0;
+  stroke-width: 2px;
+}
+
+circle {
+  fill: orange;
+  stroke: #fff;
+  stroke-width: 3px;
+}
+
+</style>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var INTERPOLATIONS = [
+  { "name": "linear",
+    "desc": "piecewise linear segments, as in a polyline." },
+  { "name": "linear-closed",
+    "desc": "close the linear segments to form a polygon." },
+  { "name": "step",
+    "desc": "alternate between horizontal and vertical segments, as in a step function." },
+  { "name": "step-before",
+    "desc": "alternate between vertical and horizontal segments, as in a step function." },
+  { "name": "step-after",
+    "desc": "alternate between horizontal and vertical segments, as in a step function." },
+  { "name": "basis",
+    "desc": "a B-spline, with control point duplication on the ends." },
+  { "name": "basis-open",
+    "desc": "an open B-spline; may not intersect the start or end." },
+  { "name": "basis-closed",
+    "desc": "a closed B-spline, as in a loop." },
+  { "name": "bundle",
+    "desc": "equivalent to basis, except the tension parameter is used to straighten the spline." },
+  { "name": "cardinal",
+    "desc": "a Cardinal spline, with control point duplication on the ends." },
+  { "name": "cardinal-open",
+    "desc": "an open Cardinal spline; may not intersect the start or end, but will intersect other control points." },
+  { "name": "cardinal-closed",
+    "desc": "a closed Cardinal spline, as in a loop." },
+  { "name": "monotone",
+    "desc": "cubic interpolation that preserves monotonicity in y." },
+];
+
+
+var points = [
+  [100, 5],
+  [195, 100],
+  [100, 195],
+  [5, 100]
+];
+
+var main = document.getElementById('main');
+
+for (var i = 0; i < INTERPOLATIONS.length; i++) {
+  var I = INTERPOLATIONS;
+  var div = document.createElement('div');
+  div.className = 'interpolation';
+  div.id = 'interpolation-'+I[i].name;
+
+  var svg = d3.select(div).append('svg')
+    .attr('width', 200)
+    .attr('height', 200);
+
+  var path = svg.append('path')
+      .data([points])
+      .attr('d', d3.svg.line()
+        .tension(0)
+        .interpolate(I[i].name));
+
+  svg.selectAll(".point")
+    .data(points)
+  .enter().append("circle")
+    .attr("r", 4)
+    .attr("transform", function(d) { return "translate(" + d + ")"; });
+
+  div.innerHTML += '<h2 class="title">' + I[i].name + '</h2>';
+  div.innerHTML += '<p class="description">' + I[i].desc + '</p>';
+  main.appendChild(div);
+}
+
+</script>
